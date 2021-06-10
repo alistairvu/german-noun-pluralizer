@@ -24,7 +24,7 @@ const NounForm: React.FC = () => {
     <form onSubmit={handleSubmit(handleEnter)}>
       <FormControl id="nouns">
         <FormLabel>German Nouns</FormLabel>
-        <Textarea {...register('nouns')} />
+        <Textarea {...register('nouns')} size="lg" rows={20} />
       </FormControl>
       <Button type="submit">Enter</Button>
     </form>
