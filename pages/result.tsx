@@ -76,12 +76,19 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
         (entry: { number: string; case: string }) =>
           entry.number === 'plural' && entry.case === 'nominative'
       );
-      const pluralWord = `die ${pluralObject.text}`;
+      if (pluralObject) {
+        const pluralWord = `die ${pluralObject.text}`;
 
-      results.push({
-        original: originalWord,
-        plural: pluralWord,
-      });
+        results.push({
+          original: originalWord,
+          plural: pluralWord,
+        });
+      } else {
+        results.push({
+          original: originalWord,
+          plural: 'N/A',
+        });
+      }
     }
   });
 
