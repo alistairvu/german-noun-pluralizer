@@ -13,7 +13,7 @@ const Home: React.FC = () => (
 
     <AppContainer py={4}>
       <Box mb={4}>
-        <Heading size="lg">Welcome to the modern German pluralizer!</Heading>
+        <Heading size="lg">Welcome to the modern German pluraliser!</Heading>
         <Text size="md">
           Enter a list of German nouns separated by commas. (maximum: 20 at a
           time)
