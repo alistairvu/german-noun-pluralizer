@@ -5,7 +5,7 @@ const AppHeader: React.FC = () => (
   <Flex justify="between" align="center" py={2} px={4} shadow="base">
     <Link href="/" passHref>
       <a>
-        <Heading size="xl">Pluralizer</Heading>
+        <Heading size="xl">Pluraliser</Heading>
       </a>
     </Link>
   </Flex>
