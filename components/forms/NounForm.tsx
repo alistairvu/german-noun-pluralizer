@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form';
-import { Textarea, Button } from '@chakra-ui/react';
+import { Textarea, Button, FormControl, FormLabel } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 
 interface NounFormData {
@@ -22,7 +22,10 @@ const NounForm: React.FC = () => {
 
   return (
     <form onSubmit={handleSubmit(handleEnter)}>
-      <Textarea {...register('nouns')} />
+      <FormControl id="nouns">
+        <FormLabel>German Nouns</FormLabel>
+        <Textarea {...register('nouns')} />
+      </FormControl>
       <Button type="submit">Enter</Button>
     </form>
   );
