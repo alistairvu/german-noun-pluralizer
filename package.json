@@ -13,6 +13,9 @@
     "@emotion/styled": "^11.3.0",
     "@heroicons/react": "^1.0.1",
     "axios": "^0.21.1",
+    "capitalize": "^2.0.3",
+    "de-noun-parser": "^2.2.1",
+    "dictcc-js": "^1.0.0",
     "framer-motion": "^4.1.17",
     "next": "10.2.3",
     "nextjs-progressbar": "^0.0.10",
@@ -21,6 +24,7 @@
     "react-hook-form": "^7.8.3"
   },
   "devDependencies": {
+    "@types/capitalize": "^2.0.0",
     "@types/react": "^17.0.9",
     "@typescript-eslint/eslint-plugin": "^4.25.0",
     "@typescript-eslint/parser": "^4.25.0",

@@ -1,7 +1,10 @@
 import axios from 'axios';
+import Link from 'next/link';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import { Heading, Box, Text, SimpleGrid } from '@chakra-ui/react';
+import { Heading, Box, Text, SimpleGrid, Button } from '@chakra-ui/react';
+import capitalize from 'capitalize';
+import parse from 'de-noun-parser';
 import { AppContainer } from '../components/app';
 import ResultTable from '../components/result/ResultTable';
 import getArticle from '../lib/getArticle';
@@ -13,10 +16,15 @@ interface ResultPageProps {
       plural: string;
     }
   ];
-  query: string;
+  query: string[];
+  notFound: string[];
 }
 
-const ResultPage: React.FC<ResultPageProps> = ({ results, query }) => (
+const ResultPage: React.FC<ResultPageProps> = ({
+  results,
+  query,
+  notFound,
+}) => (
   <>
     <Head>
       <title>German Noun Pluraliser Results</title>
@@ -27,8 +35,13 @@ const ResultPage: React.FC<ResultPageProps> = ({ results, query }) => (
     <AppContainer py={4}>
       <Box mb={4}>
         <Heading size="lg">Results</Heading>
-        <Text>The words you entered are: {query}</Text>
+        <Text>
+          The {query.length === 1 ? 'word' : 'words'} you entered{' '}
+          {query.length === 1 ? 'is' : 'are'}:{' '}
+          {query.map((word) => capitalize(word)).join(', ')}.
+        </Text>
       </Box>
+
       <SimpleGrid columns={{ base: 1, md: 2 }} spacing="40px">
         <ResultTable
           title="Singular"
@@ -39,25 +52,41 @@ const ResultPage: React.FC<ResultPageProps> = ({ results, query }) => (
           words={results.map((result) => result.plural)}
         />
       </SimpleGrid>
+
+      <Box mt={4}>
+        {notFound.length > 0 && (
+          <Text>We could not find results for: {notFound.join(', ')}.</Text>
+        )}
+        <Link href="/" passHref>
+          <Button mt={2}>Return</Button>
+        </Link>
+      </Box>
     </AppContainer>
   </>
 );
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const wordString = query.q as string;
-  const wordList = wordString.split(' ');
+  const wordList = wordString
+    .split(' ')
+    .map((word) => word.trim())
+    .filter((word) => word.length > 0);
   const wordPromises = [];
+  const notFound = [];
 
   wordList.forEach((word) => {
-    const searchPromise = axios.get(
-      `https://dictapi.lexicala.com/search-entries?source=global&language=de&text=${word}&pos=noun`,
-      {
-        auth: {
-          username: process.env.DICT_USERNAME,
-          password: process.env.DICT_PASSWORD,
-        },
-      }
-    );
+    const url = `https://en.wiktionary.org/w/api.php`;
+    const searchPromise = axios.get(url, {
+      headers: { 'Content-type': 'application/json' },
+      params: {
+        titles: capitalize(word),
+        format: 'json',
+        action: 'query',
+        rvprop: 'content',
+        prop: 'revisions',
+        redirects: '1',
+      },
+    });
     wordPromises.push(searchPromise);
   });
 
@@ -65,37 +94,40 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const results = [];
 
   promiseResults.forEach((res) => {
-    const { data } = res;
+    try {
+      const { data } = res;
+      if (data.query) {
+        const { pages } = data.query;
 
-    if (data.results.length > 0) {
-      const result = data.results[0];
-      const { headword } = result;
-      const originalWord = `${getArticle(headword.gender)} ${headword.text}`;
+        const pageKey = Object.keys(pages)[0];
 
-      const pluralObject = headword.inflections.find(
-        (entry: { number: string; case: string }) =>
-          entry.number === 'plural' && entry.case === 'nominative'
-      );
-      if (pluralObject) {
-        const pluralWord = `die ${pluralObject.text}`;
+        if (Number(pageKey) === -1) {
+          notFound.push(capitalize(pages[pageKey].title));
+        } else {
+          const pageData = pages[pageKey];
+          const wikiTextString = pageData.revisions[0]['*'];
+          const parsed = parse(wikiTextString);
 
-        results.push({
-          original: originalWord,
-          plural: pluralWord,
-        });
-      } else {
-        results.push({
-          original: originalWord,
-          plural: 'N/A',
-        });
+          const { gender, plural } = parsed;
+          const originalWord = `${getArticle(gender)} ${pageData.title}`;
+          const pluralWord = `die ${plural}`;
+
+          results.push({
+            original: originalWord,
+            plural: pluralWord,
+          });
+        }
       }
+    } catch (err) {
+      console.log(err.response);
     }
   });
 
   return {
     props: {
       results,
-      query: wordList.join(', '),
+      query: wordList,
+      notFound,
     },
   };
 };

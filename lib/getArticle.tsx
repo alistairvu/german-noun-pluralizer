@@ -1,12 +1,12 @@
 const getArticle = (word: string): string => {
   switch (word) {
-    case 'masculine': {
+    case 'm': {
       return 'der';
     }
-    case 'feminine': {
+    case 'f': {
       return 'die';
     }
-    case 'neuter': {
+    case 'n': {
       return 'das';
     }
     default: {
