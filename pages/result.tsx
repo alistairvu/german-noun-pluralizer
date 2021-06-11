@@ -42,7 +42,10 @@ const ResultPage: React.FC<ResultPageProps> = ({
         </Text>
       </Box>
 
-      <SimpleGrid columns={{ base: 1, md: 2 }} spacing="40px">
+      <SimpleGrid
+        columns={{ base: 2 }}
+        spacing={{ base: 0, sm: '20px', md: '40px' }}
+      >
         <ResultTable
           title="Singular"
           words={results.map((result) => result.original)}
@@ -110,7 +113,11 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
 
           const { gender, plural } = parsed;
           const originalWord = `${getArticle(gender)} ${pageData.title}`;
-          const pluralWord = `die ${plural}`;
+          const pluralWord = `die ${
+            plural.startsWith('-')
+              ? pageData.title + plural.substring(1)
+              : plural
+          }`;
 
           results.push({
             original: originalWord,
