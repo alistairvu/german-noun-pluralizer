@@ -106,9 +106,10 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
         } else {
           const pageData = pages[pageKey];
           const wikiTextString = pageData.revisions[0]['*'];
-          const parsed = parse(wikiTextString);
 
+          const parsed = parse(wikiTextString);
           const { gender, plural } = parsed;
+
           const originalWord = `${getArticle(gender)} ${pageData.title}`;
           const pluralWord = `die ${
             plural.startsWith('-')
