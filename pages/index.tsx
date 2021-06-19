@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import { Heading, Box, Text } from '@chakra-ui/react';
-import { AppContainer } from '../components/app';
-import NounForm from '../components/forms/NounForm';
+import { AppContainer } from '@components/app';
+import NounForm from '@components/forms/NounForm';
 
 const Home: React.FC = () => (
   <>

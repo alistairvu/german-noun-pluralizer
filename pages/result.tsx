@@ -5,9 +5,9 @@ import Head from 'next/head';
 import { Heading, Box, Text, SimpleGrid, Button } from '@chakra-ui/react';
 import capitalize from 'capitalize';
 import parse from 'de-noun-parser';
-import { AppContainer } from '../components/app';
-import ResultTable from '../components/result/ResultTable';
-import getArticle from '../lib/getArticle';
+import { AppContainer } from '@components/app';
+import ResultTable from '@components/result/ResultTable';
+import getArticle from '@lib/getArticle';
 
 interface ResultPageProps {
   results: [

@@ -1,7 +1,7 @@
 import { AppProps } from 'next/app';
 import NextNprogress from 'nextjs-progressbar';
 import { ChakraProvider } from '@chakra-ui/react';
-import { AppHeader } from '../components/app';
+import { AppHeader } from '@components/app';
 
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => (
   <ChakraProvider>
