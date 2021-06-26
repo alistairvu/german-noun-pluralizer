@@ -1,4 +1,5 @@
 import { useForm } from 'react-hook-form';
+import { useState } from 'react';
 import { Textarea, Button, FormControl, FormLabel } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 
@@ -8,9 +9,11 @@ interface NounFormData {
 
 const NounForm: React.FC = () => {
   const { register, handleSubmit } = useForm<NounFormData>();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
   const handleEnter = ({ nouns }: NounFormData): void => {
+    setIsSubmitting(true);
     const separatedNouns = nouns.split('\n');
     const filteredNouns = separatedNouns.map((noun) => {
       const splitNoun = noun.split(' ');
@@ -26,7 +29,9 @@ const NounForm: React.FC = () => {
         <FormLabel>German Nouns</FormLabel>
         <Textarea {...register('nouns')} size="lg" rows={20} />
       </FormControl>
-      <Button type="submit">Enter</Button>
+      <Button type="submit" isLoading={isSubmitting} loadingText="Loading">
+        Enter
+      </Button>
     </form>
   );
 };
